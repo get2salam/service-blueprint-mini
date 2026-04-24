@@ -4,28 +4,35 @@ Map your service flow from first contact to final handoff.
 
 ![Service Blueprint Mini preview](docs/preview.svg)
 
-Service Blueprint Mini is a small local-first planning tool for solo builders, operators, and creative teams who want a cleaner way to manage stages. Add items, score the signal, track the friction, and keep the strongest opportunities visible without needing a backend or build step.
+Service Blueprint Mini is a local-first delivery board for consultants, agencies, and solo operators who want a clearer service journey. It makes weak handoffs, slow value moments, and fragile delivery steps visible before they start hurting trust.
 
-## Features
+## What it does
 
-- Local-first persistence with `localStorage`
-- Search and filter controls
-- Ranked list sorted by signal minus friction
-- Inline editor for title, notes, type, status, score, and effort
-- Import/export JSON backups
-- Re-seed action for resetting the sample board
-- Keyboard shortcuts: `N` for new, `/` for search
-- No build tooling, just open in a browser
+- ranks service stages by fragility, leverage, friction, and time-to-value
+- tracks **owner**, **handoff**, **health**, and **time-to-value** for each stage
+- highlights the weakest current step, the fastest value moment, and the highest leverage fix
+- includes quick actions for strengthening a handoff, marking a stage reliable, and raising a red flag when service quality slips
+- renders a weak-point queue and journey mix beneath the main board
+- saves locally in the browser with JSON import/export backups
+
+## Why it feels different
+
+Service Blueprint Mini is not a generic task board. It is built around the client experience itself, so you can tune delivery flow, remove hidden friction, and make the service feel smoother from intake through expansion.
 
 ## Quick start
 
 ```bash
-git clone https://github.com/<you>/service-blueprint-mini.git
+git clone https://github.com/get2salam/service-blueprint-mini.git
 cd service-blueprint-mini
 python -m http.server 8000
 ```
 
 Then open <http://localhost:8000>.
+
+## Keyboard shortcuts
+
+- `N` creates a new stage
+- `/` focuses the search box
 
 ## Data shape
 
@@ -38,7 +45,10 @@ Then open <http://localhost:8000>.
       "category": "Intake",
       "state": "Reliable",
       "score": 9,
-      "effort": 2
+      "health": 8,
+      "ttv": 30,
+      "owner": "Founder",
+      "handoff": "Discovery call -> scoped summary"
     }
   ]
 }
