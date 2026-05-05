@@ -87,11 +87,18 @@ function uid() {
 }
 
 function escapeHtml(value) {
-  return String(value || '')
+  return String(value ?? '')
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;');
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function clampNumber(value, fallback, min, max) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, parsed));
 }
 
 function normalize(item = {}) {
@@ -100,10 +107,10 @@ function normalize(item = {}) {
     title: item.title || 'New stage',
     category: CONFIG.categories.includes(item.category) ? item.category : CONFIG.categories[0],
     state: CONFIG.states.includes(item.state) ? item.state : CONFIG.states[0],
-    score: Number(item.score ?? 7),
-    effort: Number(item.effort ?? 3),
-    health: Number(item.health ?? 5),
-    ttv: Number(item.ttv ?? 30),
+    score: clampNumber(item.score, 7, 1, 10),
+    effort: clampNumber(item.effort, 3, 1, 10),
+    health: clampNumber(item.health, 5, 1, 10),
+    ttv: clampNumber(item.ttv, 30, 0, 100000),
     owner: item.owner || 'Owner',
     handoff: item.handoff || 'Current handoff or transition',
     note: item.note || 'Capture what makes this stage strong or fragile.',
@@ -292,23 +299,23 @@ function renderInsights(items) {
     {
       label: 'Most urgent weak point',
       title: weakest?.title || 'No stage yet',
-      body: weakest ? `${weakest.health}/10 health with owner ${weakest.owner}.` : 'Add a service stage to reveal weak points.',
+      body: weakest ? `${weakest.health}/10 health with owner ${escapeHtml(weakest.owner)}.` : 'Add a service stage to reveal weak points.',
     },
     {
       label: 'Fastest value moment',
       title: fastest?.title || 'No stage yet',
-      body: fastest ? `${fastest.ttv} minutes to value via ${fastest.handoff}.` : 'Time-to-value surfaces here once stages exist.',
+      body: fastest ? `${fastest.ttv} minutes to value via ${escapeHtml(fastest.handoff)}.` : 'Time-to-value surfaces here once stages exist.',
     },
     {
       label: 'Highest leverage fix',
       title: strongest?.title || 'No stage yet',
-      body: strongest ? `Priority ${priority(strongest)} with state ${strongest.state}.` : 'The strongest stage fix will appear here.',
+      body: strongest ? `Priority ${priority(strongest)} with state ${escapeHtml(strongest.state)}.` : 'The strongest stage fix will appear here.',
     },
   ];
   refs.insights.innerHTML = cards.map((card) => `
     <article class="card insight-card">
       <p class="eyebrow">${card.label}</p>
-      <h3>${card.title}</h3>
+      <h3>${escapeHtml(card.title)}</h3>
       <p>${card.body}</p>
     </article>
   `).join('');
@@ -326,20 +333,20 @@ function renderList(items) {
   }
 
   refs.list.innerHTML = items.map((item) => `
-    <button class="item ${item.id === state.ui.selectedId ? 'is-selected' : ''}" type="button" data-id="${item.id}">
+    <button class="item ${item.id === state.ui.selectedId ? 'is-selected' : ''}" type="button" data-id="${escapeHtml(item.id)}">
       <div class="item-top">
-        <strong>${item.title}</strong>
+        <strong>${escapeHtml(item.title)}</strong>
         <span class="score">${priority(item)}</span>
       </div>
-      <p>${item.handoff}</p>
+      <p>${escapeHtml(item.handoff)}</p>
       <div class="badge-row">
         <span class="pill ${toneForHealth(item)}">Health ${item.health}/10</span>
         <span class="pill">${item.ttv} min</span>
-        <span class="pill">${item.owner}</span>
+        <span class="pill">${escapeHtml(item.owner)}</span>
       </div>
       <div class="meta">
-        <span>${item.category}</span>
-        <span>${item.state}</span>
+        <span>${escapeHtml(item.category)}</span>
+        <span>${escapeHtml(item.state)}</span>
         <span>Leverage ${item.score}/10</span>
         <span>Friction ${item.effort}/10</span>
       </div>
@@ -362,7 +369,7 @@ function renderEditor(item) {
     <div class="editor-head">
       <div>
         <p class="eyebrow">Stage editor</p>
-        <h3>${item.title}</h3>
+        <h3>${escapeHtml(item.title)}</h3>
       </div>
       <span class="score">Priority ${priority(item)}</span>
     </div>
@@ -420,7 +427,7 @@ function renderEditor(item) {
         <button class="btn" type="button" data-action="raise-red-flag">Raise red flag</button>
       </div>
       <div class="editor-actions">
-        <span class="helper">${item.owner} owns this step, with ${item.ttv} minutes to value.</span>
+        <span class="helper">${escapeHtml(item.owner)} owns this step, with ${item.ttv} minutes to value.</span>
         <button class="btn btn-danger" type="button" data-action="remove-current">Remove</button>
       </div>
     </div>
@@ -441,10 +448,10 @@ function renderPanels() {
       ${weakPoints.slice(0, 4).map((item) => `
         <div class="mini-card">
           <div class="inline-split">
-            <strong>${item.title}</strong>
+            <strong>${escapeHtml(item.title)}</strong>
             <span class="pill ${toneForHealth(item)}">${item.health}/10</span>
           </div>
-          <p>${item.owner} · ${item.handoff} · ${item.ttv} min to value.</p>
+          <p>${escapeHtml(item.owner)} · ${escapeHtml(item.handoff)} · ${item.ttv} min to value.</p>
         </div>
       `).join('') || `<div class="empty"><strong>No stages yet</strong><p>Map the service journey to reveal weak spots.</p></div>`}
     </div>
@@ -461,7 +468,7 @@ function renderPanels() {
     </div>
     <ul class="metric-list">
       ${byCategory.map(({ entry, count }) => `<li><span>${entry}</span><strong>${count}</strong></li>`).join('')}
-      <li><span>Fastest value stage</span><strong>${state.items.length ? [...state.items].sort((a, b) => a.ttv - b.ttv)[0].title : '—'}</strong></li>
+      <li><span>Fastest value stage</span><strong>${state.items.length ? escapeHtml([...state.items].sort((a, b) => a.ttv - b.ttv)[0].title) : '—'}</strong></li>
     </ul>
   `;
 }
