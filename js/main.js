@@ -66,6 +66,9 @@ const refs = {
 const toastHost = (() => {
   const host = document.createElement('div');
   host.className = 'toast-host';
+  host.setAttribute('role', 'status');
+  host.setAttribute('aria-live', 'polite');
+  host.setAttribute('aria-atomic', 'true');
   document.body.appendChild(host);
   return host;
 })();
@@ -539,6 +542,7 @@ document.addEventListener('change', async (event) => {
 
 document.addEventListener('keydown', (event) => {
   if (event.target.closest('input, textarea, select')) return;
+  if (event.metaKey || event.ctrlKey || event.altKey) return;
   if (event.key.toLowerCase() === 'n') {
     event.preventDefault();
     addItem();
