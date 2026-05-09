@@ -220,9 +220,20 @@ function exportState() {
   showToast('Downloaded backup.');
 }
 
+function isPlainObject(value) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function validateImportShape(parsed) {
+  if (!isPlainObject(parsed)) throw new Error('Backup must be a JSON object.');
+  if (parsed.items !== undefined && !Array.isArray(parsed.items)) throw new Error('Backup "items" must be an array.');
+  if (parsed.ui !== undefined && !isPlainObject(parsed.ui)) throw new Error('Backup "ui" must be an object.');
+  return parsed;
+}
+
 async function importState(file) {
   const raw = await file.text();
-  const parsed = JSON.parse(raw);
+  const parsed = validateImportShape(JSON.parse(raw));
   commit({
     ...seedState(),
     ...parsed,
@@ -533,7 +544,8 @@ document.addEventListener('change', async (event) => {
       await importState(file);
     } catch (error) {
       console.error(error);
-      showToast('Import failed.');
+      const reason = error instanceof SyntaxError ? 'file is not valid JSON' : error.message || 'unknown error';
+      showToast(`Import failed: ${reason}`);
     } finally {
       event.target.value = '';
     }
