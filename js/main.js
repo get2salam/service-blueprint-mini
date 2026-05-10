@@ -226,7 +226,18 @@ function isPlainObject(value) {
 
 function validateImportShape(parsed) {
   if (!isPlainObject(parsed)) throw new Error('Backup must be a JSON object.');
-  if (parsed.items !== undefined && !Array.isArray(parsed.items)) throw new Error('Backup "items" must be an array.');
+  if (parsed.boardTitle !== undefined && typeof parsed.boardTitle !== 'string') {
+    throw new Error('Backup "boardTitle" must be a string.');
+  }
+  if (parsed.boardSubtitle !== undefined && typeof parsed.boardSubtitle !== 'string') {
+    throw new Error('Backup "boardSubtitle" must be a string.');
+  }
+  if (parsed.items !== undefined) {
+    if (!Array.isArray(parsed.items)) throw new Error('Backup "items" must be an array.');
+    parsed.items.forEach((item, index) => {
+      if (!isPlainObject(item)) throw new Error(`Backup "items[${index}]" must be an object.`);
+    });
+  }
   if (parsed.ui !== undefined && !isPlainObject(parsed.ui)) throw new Error('Backup "ui" must be an object.');
   return parsed;
 }
