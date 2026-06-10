@@ -54,6 +54,17 @@ Then open <http://localhost:8000>.
 }
 ```
 
+## Blueprint sanity check
+
+A tiny CLI flags **calibration conflicts** inside an exported backup — places where two signals about a stage disagree, like a stage tagged `Fragile` whose health score is `9/10`, or a `Signature` stage with sub-par health.
+
+```bash
+node bin/sanity-check.mjs path/to/service-blueprint-mini.json
+node --test test/sanity-check.test.mjs
+```
+
+Exit codes: `0` clean, `1` issues found, `2` usage or read error. See [docs/sanity-check.md](docs/sanity-check.md) for the rule list and a worked example.
+
 ## Privacy
 
 Everything stays in your browser unless you export a JSON backup.
