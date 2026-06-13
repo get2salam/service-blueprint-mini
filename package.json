@@ -1,0 +1,14 @@
+{
+  "name": "service-blueprint-mini",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first service blueprint board with backup sanity checks.",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "verify": "npm run test && node bin/sanity-check.mjs test/fixtures/clean-blueprint.json"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

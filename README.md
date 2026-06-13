@@ -60,8 +60,11 @@ A tiny CLI flags **calibration conflicts** inside an exported backup — places 
 
 ```bash
 node bin/sanity-check.mjs path/to/service-blueprint-mini.json
-node --test test/sanity-check.test.mjs
+npm test
+npm run verify
 ```
+
+`npm run verify` runs the Node test suite and a fixture-backed CLI smoke check, matching the GitHub Actions workflow used for pull requests and pushes to `main`.
 
 Exit codes: `0` clean, `1` issues found, `2` usage or read error. See [docs/sanity-check.md](docs/sanity-check.md) for the rule list and a worked example.
 

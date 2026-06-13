@@ -1,0 +1,30 @@
+{
+  "schema": "service-blueprint-mini/v2",
+  "boardTitle": "Service blueprint",
+  "items": [
+    {
+      "title": "Fast discovery intake",
+      "category": "Intake",
+      "state": "Reliable",
+      "score": 9,
+      "effort": 2,
+      "health": 8,
+      "ttv": 30,
+      "owner": "Founder",
+      "handoff": "Discovery call -> scoped summary",
+      "note": "A stronger intake reduces confusion everywhere else."
+    },
+    {
+      "title": "Mid-project visibility update",
+      "category": "Delivery",
+      "state": "Improving",
+      "score": 8,
+      "effort": 3,
+      "health": 6,
+      "ttv": 45,
+      "owner": "Project lead",
+      "handoff": "Weekly async update -> client reply",
+      "note": "Clients relax when they can see progress without needing to chase."
+    }
+  ]
+}
