@@ -68,6 +68,16 @@ npm run verify
 
 Exit codes: `0` clean, `1` issues found, `2` usage or read error. See [docs/sanity-check.md](docs/sanity-check.md) for the rule list and a worked example.
 
+## Runnable review example
+
+The repository includes a deliberately at-risk export at `examples/at-risk-blueprint.json` so contributors can see the sanity checker without hand-writing a backup first:
+
+```bash
+npm run example:review
+```
+
+The example runner prints the same report as the CLI but exits successfully after confirming the fixture still demonstrates four review findings. That keeps the docs runnable in `npm run verify` while preserving the CLI's normal non-zero exit when a real backup contains issues.
+
 ## Privacy
 
 Everything stays in your browser unless you export a JSON backup.

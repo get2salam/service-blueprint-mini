@@ -1,0 +1,18 @@
+{
+  "schema": "service-blueprint-mini/v2",
+  "boardTitle": "Service blueprint review example",
+  "items": [
+    {
+      "title": "Launch handoff",
+      "category": "Delivery",
+      "state": "Fragile",
+      "score": 8,
+      "effort": 3,
+      "health": 9,
+      "ttv": 720,
+      "owner": "Owner",
+      "handoff": "Stage handoff",
+      "note": "Intentionally miscalibrated so the runnable example demonstrates every warning class."
+    }
+  ]
+}

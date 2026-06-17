@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { RULES, findIssues, formatReport } from '../bin/sanity-check.mjs';
 
 const baseline = {
@@ -54,4 +55,17 @@ test('report lists every issue line', () => {
 test('rule ids are unique', () => {
   const ids = RULES.map((rule) => rule.id);
   assert.equal(new Set(ids).size, ids.length);
+});
+
+test('documented at-risk example demonstrates all expected review findings', async () => {
+  const raw = await readFile(new URL('../examples/at-risk-blueprint.json', import.meta.url), 'utf8');
+  const parsed = JSON.parse(raw);
+  const issues = findIssues(parsed.items);
+
+  assert.deepEqual(issues.map((issue) => issue.rule), [
+    'state-health-fragile-but-healthy',
+    'placeholder-owner',
+    'placeholder-handoff',
+    'ttv-out-of-range',
+  ]);
 });
