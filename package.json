@@ -6,8 +6,9 @@
   "description": "Local-first service blueprint board with backup sanity checks.",
   "scripts": {
     "example:review": "node bin/review-example.mjs",
+    "example:brief": "node bin/handoff-brief.mjs test/fixtures/clean-blueprint.json",
     "test": "node --test test/*.test.mjs",
-    "verify": "npm run test && node bin/sanity-check.mjs test/fixtures/clean-blueprint.json && npm run example:review"
+    "verify": "npm run test && node bin/sanity-check.mjs test/fixtures/clean-blueprint.json && npm run example:review && npm run example:brief"
   },
   "engines": {
     "node": ">=20"

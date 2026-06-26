@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { RULES, findIssues, formatReport } from '../bin/sanity-check.mjs';
+import { createHandoffBrief, formatHandoffBrief } from '../bin/handoff-brief.mjs';
 
 const baseline = {
   title: 'Discovery intake',
@@ -68,4 +69,22 @@ test('documented at-risk example demonstrates all expected review findings', asy
     'placeholder-handoff',
     'ttv-out-of-range',
   ]);
+});
+
+test('handoff brief ranks risky delivery stages with concrete next actions', () => {
+  const brief = createHandoffBrief([
+    baseline,
+    { ...baseline, title: 'Launch handoff', state: 'Fragile', health: 3, effort: 7, ttv: 180 },
+    { ...baseline, title: 'Ownerless review', owner: 'Owner', health: 8 },
+  ]);
+
+  assert.equal(brief.length, 3);
+  assert.match(brief[0], /^1\. Launch handoff — Repair reliability before scaling/);
+  assert.match(brief[1], /Assign a named owner/);
+});
+
+test('handoff brief formatter labels the reviewed stage count', () => {
+  const report = formatHandoffBrief(createHandoffBrief([baseline], 1), 1);
+  assert.match(report, /Handoff readiness brief \(1 of 1 stage\(s\)\)/);
+  assert.match(report, /Discovery intake/);
 });

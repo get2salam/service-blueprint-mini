@@ -78,6 +78,17 @@ npm run example:review
 
 The example runner prints the same report as the CLI but exits successfully after confirming the fixture still demonstrates four review findings. That keeps the docs runnable in `npm run verify` while preserving the CLI's normal non-zero exit when a real backup contains issues.
 
+## Handoff readiness brief
+
+For a fast delivery-review ritual, generate a ranked handoff brief from any exported backup:
+
+```bash
+node bin/handoff-brief.mjs test/fixtures/clean-blueprint.json
+npm run example:brief
+```
+
+The brief sorts stages by reliability risk, placeholder ownership, handoff clarity, friction, and time-to-value pressure. It gives a short next action for the top stages so a client-delivery review can move from board data to concrete fixes without opening the browser UI.
+
 ## Privacy
 
 Everything stays in your browser unless you export a JSON backup.
