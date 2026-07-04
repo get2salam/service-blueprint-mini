@@ -33,6 +33,12 @@ Then open <http://localhost:8000>.
 
 - `N` creates a new stage
 - `/` focuses the search box
+- Tab from page load to reveal a "Skip to stage board" link that jumps past the header controls
+
+## Accessibility notes
+
+- The board sits inside a `<main>` landmark with a skip link so keyboard users can bypass repeated header controls
+- The selected stage in the board list carries `aria-current="true"`, so screen reader users get the same selection signal as the sighted highlight border
 
 ## Data shape
 
