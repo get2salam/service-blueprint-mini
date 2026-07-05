@@ -4,6 +4,8 @@ A small CLI that reads an exported backup and flags **calibration conflicts** in
 
 It is not a schema validator. The importer already rejects malformed shapes. This tool answers a different question: *does the data we have tell a coherent story about the service?*
 
+Backups can come from anywhere — a client export, an old download, a shared file — so stage text is treated as untrusted before it reaches the terminal. `title`, `owner`, and `handoff` values are passed through `bin/text-safety.mjs`, which strips ASCII control characters (ANSI escapes, newlines, carriage returns) so a crafted field can't repaint terminal output or forge extra report lines.
+
 ## Rules
 
 | Rule id | Triggers when |

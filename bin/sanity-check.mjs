@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
 import { argv, exit, stdout } from 'node:process';
+import { sanitizeForDisplay } from './text-safety.mjs';
 
 const PLACEHOLDER_OWNERS = new Set(['', 'Owner']);
 const PLACEHOLDER_HANDOFFS = new Set(['', 'Current handoff or transition', 'Stage handoff']);
@@ -38,9 +39,10 @@ export function findIssues(items, rules = RULES) {
   const issues = [];
   list.forEach((item, index) => {
     if (!item || typeof item !== 'object') return;
+    const title = sanitizeForDisplay(item.title) || `Stage #${index + 1}`;
     for (const rule of rules) {
       if (rule.test(item)) {
-        issues.push({ index, title: item.title ?? `Stage #${index + 1}`, rule: rule.id, message: rule.describe(item) });
+        issues.push({ index, title, rule: rule.id, message: rule.describe(item) });
       }
     }
   });

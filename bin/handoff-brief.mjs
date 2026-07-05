@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
 import { argv, exit, stdout } from 'node:process';
+import { sanitizeForDisplay } from './text-safety.mjs';
 
 const PLACEHOLDER_OWNERS = new Set(['', 'Owner']);
 const PLACEHOLDER_HANDOFFS = new Set(['', 'Current handoff or transition', 'Stage handoff']);
@@ -47,9 +48,9 @@ export function createHandoffBrief(items, limit = 3) {
 
   return stages
     .map((item, index) => ({
-      title: item.title || `Stage #${index + 1}`,
-      owner: item.owner || 'Owner missing',
-      handoff: item.handoff || 'Handoff missing',
+      title: sanitizeForDisplay(item.title) || `Stage #${index + 1}`,
+      owner: sanitizeForDisplay(item.owner) || 'Owner missing',
+      handoff: sanitizeForDisplay(item.handoff) || 'Handoff missing',
       action: actionFor(item),
       risk: riskScore(item),
     }))

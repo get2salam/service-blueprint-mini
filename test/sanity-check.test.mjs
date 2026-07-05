@@ -88,3 +88,28 @@ test('handoff brief formatter labels the reviewed stage count', () => {
   assert.match(report, /Handoff readiness brief \(1 of 1 stage\(s\)\)/);
   assert.match(report, /Discovery intake/);
 });
+
+test('sanity report strips escape codes and newlines from an untrusted stage title', () => {
+  const esc = String.fromCharCode(0x1b);
+  const nl = String.fromCharCode(0x0a);
+  const hostileTitle = `Discovery${esc}[31m${nl}  - [fake-rule] Injected: not real`;
+  const issues = findIssues([{ ...baseline, title: hostileTitle, state: 'Fragile', health: 9 }]);
+  const report = formatReport(issues, 1);
+  assert.ok(!report.includes(esc), 'escape byte must not reach stdout');
+  // One header line plus one real issue line — a raw newline in the title must not fabricate a third.
+  assert.equal(report.split('\n').length, 2, 'an embedded newline must not fabricate an extra report line');
+});
+
+test('handoff brief strips escape codes and newlines from untrusted title/owner/handoff', () => {
+  const esc = String.fromCharCode(0x1b);
+  const nl = String.fromCharCode(0x0a);
+  const brief = createHandoffBrief([{
+    ...baseline,
+    title: `Launch${esc}[2K`,
+    owner: `Founder${nl}- [fake-rule] Injected line`,
+    handoff: `Recap${esc}]0;pwned${nl}`,
+  }]);
+  assert.equal(brief.length, 1, 'a single stage must produce a single brief entry');
+  assert.ok(!brief[0].includes(esc), 'escape byte must not reach stdout');
+  assert.equal(brief[0].split('\n').length, 1, 'an embedded newline must not fabricate an extra brief line');
+});
